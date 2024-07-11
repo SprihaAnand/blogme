@@ -6,12 +6,10 @@ BlogMe is a modern blog site built with React and powered by Appwrite backend se
 
 - [Overview](#overview)
 - [Features](#features)
-- [Screenshots](#screenshots)
 - [Installation](#installation)
 - [Usage](#usage)
 - [Technologies Used](#technologies-used)
 - [Contributing](#contributing)
-- [License](#license)
 
 ## Overview
 
@@ -24,10 +22,6 @@ BlogMe is a full-stack web application developed using React for the frontend an
 - **Image Upload:** Support for uploading featured images for blog posts.
 - **Post Management:** View, edit, and delete posts from a user-friendly dashboard.
 - **Responsive Design:** Ensures the application looks great and works well on different screen sizes.
-
-## Screenshots
-
-Include screenshots or images of your application here to provide visual representation.
 
 ## Installation
 
@@ -94,7 +88,3 @@ Contributions to BlogMe are welcome! To contribute:
 3. Commit your changes (`git commit -am 'Add some feature'`).
 4. Push to the branch (`git push origin feature/YourFeature`).
 5. Open a pull request.
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
