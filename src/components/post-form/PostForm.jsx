@@ -19,32 +19,34 @@ export default function PostForm({ post }) {
     const userData = useSelector((state) => state.auth.userData);
 
     const submit = async (data) => {
-        if (post) {
-            const file = data.image[0] ? await appwriteService.uploadFile(data.image[0]) : null;
+        let fileId = post?.featuredImage;
 
+        if (data.image && data.image[0]) {
+            const file = await appwriteService.uploadFile(data.image[0]);
             if (file) {
-                appwriteService.deleteFile(post.featuredImage);
+                fileId = file.$id;
+                if (post && post.featuredImage) {
+                    await appwriteService.deleteFile(post.featuredImage);
+                }
             }
+        }
 
+        data.featuredImage = fileId;
+
+        if (post) {
             const dbPost = await appwriteService.updatePost(post.$id, {
                 ...data,
-                featuredImage: file ? file.$id : undefined,
+                featuredImage: fileId,
             });
 
             if (dbPost) {
                 navigate(`/post/${dbPost.$id}`);
             }
         } else {
-            const file = await appwriteService.uploadFile(data.image[0]);
+            const dbPost = await appwriteService.createPost({ ...data, userId: userData.$id });
 
-            if (file) {
-                const fileId = file.$id;
-                data.featuredImage = fileId;
-                const dbPost = await appwriteService.createPost({ ...data, userId: userData.$id });
-
-                if (dbPost) {
-                    navigate(`/post/${dbPost.$id}`);
-                }
+            if (dbPost) {
+                navigate(`/post/${dbPost.$id}`);
             }
         }
     };
@@ -71,8 +73,8 @@ export default function PostForm({ post }) {
     }, [watch, slugTransform, setValue]);
 
     return (
-        <form onSubmit={handleSubmit(submit)} className="flex flex-wrap">
-            <div className="w-2/3 px-2">
+        <form onSubmit={handleSubmit(submit)} className="flex flex-wrap bg-black text-white py-8 px-4 rounded-lg shadow-lg">
+            <div className="w-full md:w-2/3 px-2">
                 <Input
                     label="Title :"
                     placeholder="Title"
@@ -90,7 +92,7 @@ export default function PostForm({ post }) {
                 />
                 <RTE label="Content :" name="content" control={control} defaultValue={getValues("content")} />
             </div>
-            <div className="w-1/3 px-2">
+            <div className="w-full md:w-1/3 px-2">
                 <Input
                     label="Featured Image :"
                     type="file"
@@ -98,7 +100,7 @@ export default function PostForm({ post }) {
                     accept="image/png, image/jpg, image/jpeg, image/gif"
                     {...register("image", { required: !post })}
                 />
-                {post && (
+                {post && post.featuredImage && (
                     <div className="w-full mb-4">
                         <img
                             src={appwriteService.getFilePreview(post.featuredImage)}
@@ -113,7 +115,7 @@ export default function PostForm({ post }) {
                     className="mb-4"
                     {...register("status", { required: true })}
                 />
-                <Button type="submit" bgColor={post ? "bg-green-500" : undefined} className="w-full">
+                <Button type="submit" bgColor={post ? "bg-green-500" : undefined} className="w-full transition duration-300 ease-in-out transform hover:scale-105">
                     {post ? "Update" : "Submit"}
                 </Button>
             </div>
